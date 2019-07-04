@@ -8,7 +8,7 @@ class StateConnectedScreen extends Component {
   }
 
   render() {
-    return(
+    return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>This screen is connected to the redux store</Text>
         <Text>{JSON.stringify(this.props.auth)}</Text>
@@ -17,10 +17,8 @@ class StateConnectedScreen extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return { auth: state.auth };
-}
+const mapStateToProps = state => ({ auth: state.auth });
 
-export default connect(mapStateToProps,{
-  
+export default connect(mapStateToProps, {
+
 })(StateConnectedScreen);

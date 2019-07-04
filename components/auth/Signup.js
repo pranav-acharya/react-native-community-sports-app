@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
-import { Button, ThemeProvider, Input, Text } from 'react-native-elements';
+import { Button, ThemeProvider, Text } from 'react-native-elements';
 
-import { emailRegex, phoneNumberRegex } from '../../utils/helpers';
-import { errorStyle, containerStyle } from '../../utils/styles';
+import { emailRegex } from '../../utils/helpers';
+import { errorStyle, formButtonStyle } from '../../utils/styles';
 import { signupPress } from '../../actions/auth_actions';
+import FormInput from '../commons/FormInput';
 
 class Signup extends Component {
   state = {
@@ -25,9 +26,7 @@ class Signup extends Component {
     );
 
     this.setState({ errors });
-    if (!errorExists) {
-      this.props.signupPress(values);
-    }
+    if (!errorExists) { this.props.signupPress(values); }
   };
 
   handleChange = fieldName => (text) => {
@@ -43,11 +42,12 @@ class Signup extends Component {
   render() {
     const { loading } = this.props.signup;
     return (
-      <View style={containerStyle}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <View style={{ width: 300 }}>
           <ThemeProvider>
-            <Input
+            <FormInput
               name="email"
+              iconName="md-mail"
               placeholder="Email (john@gmail.com)"
               autoCapitalize="none"
               autoCompleteType="off"
@@ -58,8 +58,9 @@ class Signup extends Component {
               onChangeText={this.handleChange('email')}
             />
 
-            <Input
+            <FormInput
               name="contact"
+              iconName="md-phone-portrait"
               placeholder="10 digit contact (9665234532)"
               autoCapitalize="none"
               autoCompleteType="off"
@@ -70,7 +71,8 @@ class Signup extends Component {
               onChangeText={this.handleChange('contact')}
             />
 
-            <Input
+            <FormInput
+              iconName="md-finger-print"
               name="password"
               placeholder="Password"
               autoCapitalize="none"
@@ -82,24 +84,21 @@ class Signup extends Component {
               onChangeText={this.handleChange('password')}
             />
 
-            <Text
-              visible={this.props.signup.status === false}
-              style={{ ...errorStyle, textAlign: 'center', width: '100%', marginTop: 20 }}
-            >
+            <Text visible={this.props.signup.status === false} style={{ ...errorStyle, textAlign: 'center', width: '100%', marginTop: 20 }}>
               {this.props.signup.error}
             </Text>
 
             <Button
               title="Signup"
               onPress={this.submit}
-              style={styles.authButton}
+              buttonStyle={formButtonStyle}
               loading={loading}
               disabled={loading}
             />
             <Text style={{ textAlign: 'center' }}>OR</Text>
             <Button
               title="Login here"
-              style={styles.authButton}
+              buttonStyle={formButtonStyle}
               onPress={this.onLoginPress}
             />
           </ThemeProvider>
@@ -108,14 +107,6 @@ class Signup extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  authButton: {
-    width: '100%',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-});
 
 const validate = (values) => {
   const errors = {};
@@ -133,7 +124,7 @@ const validate = (values) => {
 
   errors.contact = !values.contact
     ? 'Contact field is required'
-    : values.contact.length !== 10 || !phoneNumberRegex.test(values.email)
+    : values.contact.length !== 10 || isNaN(values.contact)
       ? 'Contact must be 10 digits'
       : undefined;
 

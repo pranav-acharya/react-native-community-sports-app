@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { Button, ThemeProvider, Input, Text } from 'react-native-elements';
+import { Button, ThemeProvider, Text } from 'react-native-elements';
 
 import { emailRegex } from '../../utils/helpers';
-import { errorStyle } from '../../utils/styles';
+import { errorStyle, formButtonStyle } from '../../utils/styles';
 import { loginPress } from '../../actions/auth_actions';
+import FormInput from '../commons/FormInput';
 
 class LoginForm extends Component {
   state = {
@@ -24,9 +25,7 @@ class LoginForm extends Component {
     );
 
     this.setState({ errors });
-    if (!errorExists) {
-      this.props.loginPress(values);
-    }
+    if (!errorExists) { this.props.loginPress(values); }
   };
 
   handleChange = fieldName => (text) => {
@@ -38,9 +37,7 @@ class LoginForm extends Component {
   componentWillReceiveProps = (nextProps) => {
     console.log(nextProps);
     // since there is no valid endpoint, use failure case to navigate
-    if (nextProps.login.status === false) {
-      this.props.navigation.navigate('Connected');
-    }
+    if (nextProps.login.status === false) { this.props.navigation.navigate('Connected'); }
   }
 
   render() {
@@ -49,9 +46,10 @@ class LoginForm extends Component {
       <View style={styles.loginContainerStyle}>
         <View style={{ width: 300 }}>
           <ThemeProvider>
-            <Input
+            <FormInput
               name="email"
               placeholder="Email"
+              iconName="md-mail"
               autoCapitalize="none"
               autoCompleteType="off"
               keyboardType="email-address"
@@ -61,9 +59,10 @@ class LoginForm extends Component {
               onChangeText={this.handleChange('email')}
             />
 
-            <Input
+            <FormInput
               name="password"
-              placeholder="password"
+              iconName="md-finger-print"
+              placeholder="Password"
               autoCapitalize="none"
               autoCompleteType="off"
               secureTextEntry
@@ -73,15 +72,7 @@ class LoginForm extends Component {
               onChangeText={this.handleChange('password')}
             />
 
-            <Text
-              visible={this.props.login.status === false}
-              style={{
-                ...errorStyle,
-                textAlign: 'center',
-                width: '100%',
-                marginTop: 20
-              }}
-            >
+            <Text visible={this.props.login.status === false} style={{ ...errorStyle, textAlign: 'center', width: '100%', marginTop: 20 }}>
               {this.props.login.error}
             </Text>
 
@@ -90,7 +81,7 @@ class LoginForm extends Component {
               title="Login"
               loading={loading}
               disabled={loading}
-              style={{ marginTop: 20 }}
+              buttonStyle={formButtonStyle}
             />
           </ThemeProvider>
         </View>
@@ -127,7 +118,6 @@ const validate = (values) => {
 const mapStateToProps = state => ({
   login: state.auth.login
 });
-
 export default connect(
   mapStateToProps,
   { loginPress }

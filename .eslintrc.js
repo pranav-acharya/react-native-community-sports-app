@@ -11,7 +11,9 @@ module.exports = {
     'comma-dangle': 'off',
     'react/destructuring-assignment': 'off',
     'no-nested-ternary': 'off',
-    'object-curly-newline': 'off'
+    'object-curly-newline': 'off',
+    'react/prefer-stateless-function': 'off',
+    'no-restricted-globals': 'off'
   },
   'globals': {
     "fetch": false
