@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Text, Button, Overlay, ListItem, withTheme } from 'react-native-elements';
+import { Text, Button, Overlay, ListItem, withTheme, Avatar } from 'react-native-elements';
 import PropTypes from 'prop-types';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import { getAvatarText } from '../../utils/helpers';
 
 class SelectList extends Component {
   state = {
@@ -37,13 +38,18 @@ class SelectList extends Component {
     return index;
   }
 
+  getAvatar = (item) => {
+    if (item.avatar_url) { return { source: { uri: item.avatar_url } }; }
+    return <Avatar rounded title={getAvatarText(item.name)} size="medium" />;
+  }
+
   render() {
     const { title, onSelect, list, headerText, theme } = this.props;
     const headerTextDisplay = headerText;
     const { selectedItem } = this.state;
     return (
       <View style={{ width: '100%' }}>
-        <Text style={{ width: '100%', fontWeight: 'bold', color: 'gray', backgroundColor: '#eee' }}>{title}</Text>
+        <Text style={{ width: '100%', fontWeight: 'bold', color: 'gray', backgroundColor: '#eee', lineHeight: 20, padding: 6 }}>{title}</Text>
         {
           selectedItem == null && (
             <ListItem
@@ -71,26 +77,42 @@ class SelectList extends Component {
           )
         }
 
-        <Overlay isVisible={this.state.showOverlay} windowBackgroundColor="rgba(0, 0, 0, .5)">
-          <View>
-            <Text>{headerTextDisplay}</Text>
-            <ScrollView>
-              {
-              list.map((item, index) => (
-                <ListItem
-                  containerStyle={this.getListItemSelectedStyle(item, index)}
-                  key={this.getKey(item, index)}
-                  leftAvatar={{ source: { uri: item.avatar_url } }}
-                  title={item.name}
-                  subtitle={item.subtitle}
-                  subtitleStyle={styles.subtitle}
-                  rightIcon={this.getIcon(item, index, theme)}
-                  rightTitleStyle={{ color: theme.colors.primary }}
-                  onPress={() => this.setState({ selectedItem: item })}
-                />
-              ))
-            }
-            </ScrollView>
+        <Overlay
+          isVisible={this.state.showOverlay}
+          windowBackgroundColor="rgba(0, 0, 0, .5)"
+          overlayStyle={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+          onBackdropPress={() => this.setState({ showOverlay: false })}
+        >
+          <React.Fragment>
+            <View>
+              <Text style={{
+                alignSelf: 'center',
+                color: theme.colors.primary,
+                lineHeight: 60,
+                fontSize: 18
+              }}
+              >
+                {headerTextDisplay}
+              </Text>
+
+              <ScrollView style={{ borderColor: 'lightgray', borderTopWidth: 1 }}>
+                {
+                list.map((item, index) => (
+                  <ListItem
+                    containerStyle={this.getListItemSelectedStyle(item, index)}
+                    key={this.getKey(item, index)}
+                    leftAvatar={this.getAvatar(item)}
+                    title={item.name}
+                    subtitle={item.subtitle}
+                    subtitleStyle={styles.subtitle}
+                    rightIcon={this.getIcon(item, index, theme)}
+                    rightTitleStyle={{ color: theme.colors.primary }}
+                    onPress={() => this.setState({ selectedItem: item })}
+                  />
+                ))
+              }
+              </ScrollView>
+            </View>
             <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between', position: 'absolute', bottom: 0, left: 0, right: 0 }}>
               <View style={{ flex: 1, padding: 5 }}>
                 <Button
@@ -114,7 +136,7 @@ class SelectList extends Component {
                 />
               </View>
             </View>
-          </View>
+          </React.Fragment>
         </Overlay>
 
       </View>
