@@ -83,7 +83,7 @@ class NewDrillScreen extends Component {
             {'Some error on HTTP request'}
           </Text>
 
-          <Button buttonStyle={formButtonStyle} title="Create new drill" onPress={() => console.log(this.state.selectedSportId)} />
+          <Button buttonStyle={formButtonStyle} title="Create new drill" onPress={() => console.log(this.state)} />
         </View>
       </View>
     );

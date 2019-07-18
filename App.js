@@ -20,6 +20,7 @@ import SettingsScreen from './screens/Parent/SettingsScreen';
 // Coach screen
 import ClassesScreen from './screens/Coach/ClassesScreen';
 import DrillsScreen from './screens/Coach/DrillsScreen';
+import NewBatchScreen from './screens/Coach/NewBatchScreen';
 
 const createTabBarIcon = iconName => ({ tintColor }) => (
   <Ionicon name={iconName} color={tintColor} size={30} style={styles.iconStyle} />
@@ -47,6 +48,10 @@ export default class App extends React.Component {
     });
 
     const CoachScreen = createBottomTabNavigator({
+      NewBatch: {
+        screen: NewBatchScreen,
+        navigationOptions: { tabBarIcon: createTabBarIcon('md-time') }
+      },
       Drills: {
         screen: DrillsScreen,
         navigationOptions: { tabBarIcon: createTabBarIcon('md-fitness') }
