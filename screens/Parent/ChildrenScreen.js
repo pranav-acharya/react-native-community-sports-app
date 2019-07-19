@@ -1,36 +1,87 @@
-import React from 'react';
-import { View, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
-import { CheckBox, Button, Avatar } from 'react-native-elements';
+import React, { Component } from 'react';
+import { View } from 'react-native';
+import { createStackNavigator } from 'react-navigation';
+import { Button, ListItem } from 'react-native-elements';
 
-import { containerStyle } from '../../utils/styles';
-import FormInput from '../../components/commons/FormInput';
+import NewChildScreen from './NewChildScreen';
+import { formButtonStyle } from '../../utils/styles';
+import LoadingIndicator from '../../components/commons/LoadingIndicator';
 
-const ChildrenScreen = () => (
-  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <KeyboardAvoidingView behavior="padding" enabled style={containerStyle}>
-      <View style={{ width: 250, alignItems: 'center' }}>
-        <View style={{ height: 100, justifyContent: 'center', alignItems: 'center' }}>
-          <Avatar rounded size="large" />
+const DUMMY_CHILDREN = [
+  {
+    id: '10',
+    name: 'Ananya',
+    age: '9',
+    avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+    gender: 'Female'
+  }
+];
+
+class ChildrenScreen extends Component {
+  state = {
+    children: [],
+    loading: true,
+  }
+
+  componentDidMount() {
+    this.loadChildren();
+  }
+
+  loadChildren = () => {
+    setTimeout(() => {
+      this.setState({
+        children: DUMMY_CHILDREN,
+        loading: false
+      });
+    }, 1000);
+  }
+
+  render() {
+    const { children, loading } = this.state;
+    if (loading) return <LoadingIndicator />;
+
+    return (
+      <View>
+        <View style={{ minHeight: 200 }}>
+          {
+            children.map(child => (
+              <ListItem
+                key={child.id}
+                leftAvatar={{ source: { uri: child.avatar } }}
+                title={child.name}
+                subtitle={`${child.age} years old`}
+                bottomDivider
+                chevron
+              />
+            ))
+          }
         </View>
-        <FormInput placeholder="Full name" iconName="md-person" />
-        <FormInput placeholder="Age" iconName="md-time" keyboardType="numeric" />
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <CheckBox
-            title="Male"
-            containerStyle={{ width: '50%', marginRight: 0, marginLeft: 0 }}
-          />
-          <CheckBox
-            title="Female"
-            containerStyle={{ width: '50%', marginRight: 0, marginLeft: 0 }}
-            checked
+        <View>
+          <Button
+            buttonStyle={formButtonStyle}
+            title="Register new child"
+            onPress={() => this.props.navigation.navigate('NewChild')}
           />
         </View>
-        <Button title="Register Child" buttonStyle={{ borderRadius: '50%', width: 200, marginTop: 20 }} />
       </View>
-    </KeyboardAvoidingView>
-  </TouchableWithoutFeedback>
-);
+    );
+  }
+}
 
+const ChildrenScreenNavigator = createStackNavigator({
+  Children: {
+    screen: ChildrenScreen,
+    navigationOptions: () => ({
+      title: 'Children'
+    })
+  },
+  NewChild: {
+    screen: NewChildScreen,
+    navigationOptions: () => ({
+      title: 'Register a child'
+    })
+  }
+});
 
-export default ChildrenScreen;
+export default ChildrenScreenNavigator;

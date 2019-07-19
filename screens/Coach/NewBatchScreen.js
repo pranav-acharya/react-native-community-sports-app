@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { ScrollView, TouchableOpacity, KeyboardAvoidingView, View } from 'react-native';
 import { Button, Overlay } from 'react-native-elements';
 import CalendarPicker from 'react-native-calendar-picker';
 
@@ -154,7 +154,7 @@ class NewBatchScreen extends Component {
             onChangeText={this.handleChange('capacity')}
           />
 
-          <Button title="Create Batch" onPress={this.submit} />
+          <Button title="Create Batch" onPress={this.submit} buttonStyle={formButtonStyle} />
         </ScrollView>
 
         <Overlay
@@ -175,7 +175,14 @@ class NewBatchScreen extends Component {
             scaleFactor={375}
             onDateChange={this.onDateChange}
           />
-          <Button title="Done" onPress={() => this.setState({ showCalendarOverlay: false })} buttonStyle={formButtonStyle} />
+
+          <View>
+            <Button
+              title="Done"
+              onPress={() => this.setState({ showCalendarOverlay: false })}
+              buttonStyle={formButtonStyle}
+            />
+          </View>
         </Overlay>
 
       </KeyboardAvoidingView>
