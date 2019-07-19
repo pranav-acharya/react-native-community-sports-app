@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { Button, Overlay } from 'react-native-elements';
 import CalendarPicker from 'react-native-calendar-picker';
 
-import { containerStyle, formButtonStyle, errorStyle } from '../../utils/styles';
+import { formButtonStyle, errorStyle } from '../../utils/styles';
 import { formatDate } from '../../utils/helpers';
 import FormInput from '../../components/commons/FormInput';
 import SelectList from '../../components/commons/SelectList';
@@ -94,7 +94,7 @@ class NewBatchScreen extends Component {
 
 
     return (
-      <View>
+      <KeyboardAvoidingView behavior="position" enabled>
         <ScrollView>
 
           <SelectList
@@ -175,10 +175,10 @@ class NewBatchScreen extends Component {
             scaleFactor={375}
             onDateChange={this.onDateChange}
           />
-          <Button title="Done" onPress={() => this.setState({ showCalendarOverlay: false })} />
+          <Button title="Done" onPress={() => this.setState({ showCalendarOverlay: false })} buttonStyle={formButtonStyle} />
         </Overlay>
 
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
