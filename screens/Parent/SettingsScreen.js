@@ -5,12 +5,24 @@ import { containerStyle } from '../../utils/styles';
 import { getAvatarText } from '../../utils/helpers';
 import FormInput from '../../components/commons/FormInput';
 
-
+const SAMPLE_PROFILE = {
+  name: 'Mohan Reddy',
+  email: 'mohan.reddy@gmail.com',
+  contact: '9851441563'
+};
 class SettingsScreen extends Component {
   state = {
-    name: 'Pranav Acharya',
-    email: 'pranav.acharya@sap.com',
-    contact: '9820481583'
+    name: '',
+    email: '',
+    contact: ''
+  }
+
+  componentDidMount() {
+    this.loadProfileDetails();
+  }
+
+  loadProfileDetails() {
+    this.setState(SAMPLE_PROFILE);
   }
 
   render() {
