@@ -5,20 +5,12 @@ import { Button, ListItem } from 'react-native-elements';
 import { containerStyle, formButtonStyle } from '../../utils/styles';
 import LoadingIndicator from '../../components/commons/LoadingIndicator';
 import NewBatchScreen from './NewBatchScreen';
+import ClassUpdate from './ClassUpdate';
+import ClassPhotos from './ClassPhotos';
+import ClassStats from './ClassStats';
+import { getBatchesByCoach } from '../../api/services';
+import BatchClasses from './BatchClasses';
 
-const DUMMY_CLASSES = [
-  {
-    id: 'batch1',
-    name: 'Batch A',
-    description: 'Under 12',
-    sport: {
-      name: 'badminton'
-    },
-    community: {
-      name: 'Brigade lakefront'
-    }
-  }
-];
 
 class BatchScreen extends Component {
   state = {
@@ -31,12 +23,8 @@ class BatchScreen extends Component {
   }
 
   loadClasses = () => {
-    setTimeout(() => {
-      this.setState({
-        batches: DUMMY_CLASSES,
-        loading: false
-      });
-    }, 1000);
+    getBatchesByCoach('some coach ID')
+      .then(batches => this.setState({ batches, loading: false }));
   }
 
   render() {
@@ -55,6 +43,7 @@ class BatchScreen extends Component {
                 subtitle={batch.description}
                 bottomDivider
                 chevron
+                onPress={() => this.props.navigation.navigate('BatchClasses', batch)}
               />
             ))
           }
@@ -77,6 +66,30 @@ const BatchesScreenNavigator = createStackNavigator({
     navigationOptions: () => ({
       title: 'New Batch'
     })
+  },
+  BatchClasses: {
+    screen: BatchClasses,
+    navigationOptions: () => ({
+      title: 'Classes'
+    })
+  },
+  ClassUpdate: {
+    screen: ClassUpdate,
+    navigationOptions: ({ navigation }) => ({
+      title: `Batch - ${navigation.state.params.name}`,
+    }),
+  },
+  ClassPhotos: {
+    screen: ClassPhotos,
+    navigationOptions: ({ navigation }) => ({
+      title: `Photos - ${navigation.state.params.name}`,
+    }),
+  },
+  ClassStats: {
+    screen: ClassStats,
+    navigationOptions: ({ navigation }) => ({
+      title: `Performance - ${navigation.state.params.name}`,
+    }),
   }
 });
 

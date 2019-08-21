@@ -37,7 +37,7 @@ class LoginForm extends Component {
   componentWillReceiveProps = (nextProps) => {
     console.log(nextProps);
     // since there is no valid endpoint, use failure case to navigate
-    if (nextProps.login.status === false) { this.props.navigation.navigate('Connected'); }
+    if (nextProps.login.status === false) { this.props.navigation.navigate('NewProfile'); }
   }
 
   render() {

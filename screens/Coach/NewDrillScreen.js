@@ -5,23 +5,14 @@ import { containerStyle, formButtonStyle, errorStyle } from '../../utils/styles'
 
 import FormInput from '../../components/commons/FormInput';
 import SelectList from '../../components/commons/SelectList';
-
-const classList = [
-  {
-    id: 'Football',
-    name: 'Football',
-    subtitle: 'Hoodi'
-  },
-  {
-    id: 'Badmintom',
-    name: 'Badminton',
-    subtitle: 'Whitefield'
-  }
-];
+import { getSports } from '../../api/services';
+import LoadingIndicator from '../../components/commons/LoadingIndicator';
 
 
 class NewDrillScreen extends Component {
   state = {
+    sports: [],
+    loading: true,
     selectedSportId: null,
     fields: {
       name: null,
@@ -30,6 +21,11 @@ class NewDrillScreen extends Component {
     errors: {
 
     }
+  }
+
+  componentWillMount() {
+    getSports()
+      .then(sports => this.setState({ sports, loading: false }));
   }
 
   submit = () => {
@@ -51,12 +47,15 @@ class NewDrillScreen extends Component {
 
 
   render() {
+    const { loading, sports } = this.state;
+    if (loading) return <LoadingIndicator />;
+
     return (
       <View style={containerStyle}>
         <View style={{ width: 300 }}>
           <SelectList
             title="Select a sport class"
-            list={classList}
+            list={sports}
             uniqueIdentifier="id"
             onSelect={(item) => {
               this.setState({ selectedSportId: item.id });

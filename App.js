@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { AppState, StyleSheet } from 'react-native';
 import { ThemeProvider } from 'react-native-elements';
 import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import { Provider } from 'react-redux';
@@ -11,6 +11,9 @@ import WelcomeScreen from './screens/WelcomeScreen';
 import StateConnectedScreen from './screens/StateConnectedScreen';
 import AuthScreen from './screens/AuthScreen';
 
+// Misc
+import NewProfileScreen from './screens/NewProfileScreen';
+
 // Parents screen
 import ChildrenScreen from './screens/Parent/ChildrenScreen';
 import EnrollScreen from './screens/Parent/EnrollScreen';
@@ -18,15 +21,33 @@ import FeedScreen from './screens/Parent/FeedScreen';
 import SettingsScreen from './screens/Parent/SettingsScreen';
 
 // Coach screen
-import ClassesScreen from './screens/Coach/ClassesScreen';
+import BatchScreen from './screens/Coach/BatchScreen';
 import DrillsScreen from './screens/Coach/DrillsScreen';
-import NewBatchScreen from './screens/Coach/NewBatchScreen';
 
 const createTabBarIcon = iconName => ({ tintColor }) => (
   <Ionicon name={iconName} color={tintColor} size={30} style={styles.iconStyle} />
 );
 
 export default class App extends React.Component {
+  componentDidMount() {
+    console.log('componentDidMount');
+    AppState.addEventListener('change', this.handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    console.log('componentWillUnmount');
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
+
+  handleAppStateChange = (nextAppState) => {
+    if (nextAppState === 'active') {
+      // check the token if it exists and has expired
+      // if so, refresh it or prompt the user to refresh it
+    }
+    console.log('AppState', nextAppState);
+    console.log('globals', global.email);
+  };
+
   render() {
     const ParentScreen = createBottomTabNavigator({
       Settings: {
@@ -48,17 +69,13 @@ export default class App extends React.Component {
     });
 
     const CoachScreen = createBottomTabNavigator({
-      NewBatch: {
-        screen: NewBatchScreen,
+      Batches: {
+        screen: BatchScreen,
         navigationOptions: { tabBarIcon: createTabBarIcon('md-time') }
       },
       Drills: {
         screen: DrillsScreen,
         navigationOptions: { tabBarIcon: createTabBarIcon('md-fitness') }
-      },
-      Classes: {
-        screen: ClassesScreen,
-        navigationOptions: { tabBarIcon: createTabBarIcon('md-time') }
       },
       Settings: {
         screen: SettingsScreen,
@@ -71,7 +88,8 @@ export default class App extends React.Component {
       Parent: ParentScreen,
       Welcome: WelcomeScreen,
       Auth: AuthScreen,
-      Connected: StateConnectedScreen
+      Connected: StateConnectedScreen,
+      NewProfile: NewProfileScreen,
     }, {
       tabBarOptions: {
         activeTintColor: 'tomato',

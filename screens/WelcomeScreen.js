@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AsyncStorage } from 'react-native';
+import { AppState, AsyncStorage } from 'react-native';
 import WelcomeComponent from '../components/WelcomeComponent';
 import LoadingIndicator from '../components/commons/LoadingIndicator';
 
@@ -18,6 +18,26 @@ class WelcomeScreen extends Component {
     }
     // else navigate to auth
   }
+
+  componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
+
+  handleAppStateChange = (nextAppState) => {
+    console.log('state', nextAppState);
+    // if (
+    //   this.state.appState.match(/inactive|background/)
+    //   && nextAppState === 'active'
+    // ) {
+    //   console.log('App has come to the foreground!');
+    // }
+    // this.setState({ appState: nextAppState });
+  }
+
 
   render() {
     const { token } = this.state;

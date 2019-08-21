@@ -1,21 +1,12 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, NetInfo } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import { Button, ListItem } from 'react-native-elements';
 
 import NewChildScreen from './NewChildScreen';
 import { formButtonStyle } from '../../utils/styles';
 import LoadingIndicator from '../../components/commons/LoadingIndicator';
-
-const DUMMY_CHILDREN = [
-  {
-    id: '10',
-    name: 'Ananya',
-    age: '9',
-    avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-    gender: 'Female'
-  }
-];
+import { getMyChildren } from '../../api/services';
 
 class ChildrenScreen extends Component {
   state = {
@@ -25,15 +16,22 @@ class ChildrenScreen extends Component {
 
   componentDidMount() {
     this.loadChildren();
+    this.props.navigation.addListener('didFocus', () => {
+      NetInfo.isConnected.fetch().then((isConnected) => {
+        // this.setState({ isConnected });
+        if (isConnected) { this.loadChildren(); }
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    this.props.navigation.removeListener('didFocus');
   }
 
   loadChildren = () => {
-    setTimeout(() => {
-      this.setState({
-        children: DUMMY_CHILDREN,
-        loading: false
-      });
-    }, 1000);
+    this.setState({ loading: true });
+    getMyChildren()
+      .then(children => this.setState({ children, loading: false }));
   }
 
   render() {
@@ -47,7 +45,7 @@ class ChildrenScreen extends Component {
             children.map(child => (
               <ListItem
                 key={child.id}
-                leftAvatar={{ source: { uri: child.avatar } }}
+                leftAvatar={{ source: { uri: child.thumbnail } }}
                 title={child.name}
                 subtitle={`${child.age} years old`}
                 bottomDivider

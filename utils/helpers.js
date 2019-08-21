@@ -25,3 +25,5 @@ export const formatDate = (date) => {
 
   return `${day} ${monthNames[monthIndex]}`;
 };
+
+export const getAxiosErrorMessage = err => JSON.stringify(err);

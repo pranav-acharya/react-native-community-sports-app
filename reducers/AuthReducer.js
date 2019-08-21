@@ -1,8 +1,9 @@
-import { LOGIN_SUCCESS, LOGIN_FAILURE, SIGNUP_FAILURE, SIGNUP_SUCCESS, SIGNUP_LOADING, LOGIN_LOADING } from '../actions/types';
+import { LOGIN_SUCCESS, LOGIN_FAILURE, SIGNUP_FAILURE, SIGNUP_SUCCESS, SIGNUP_LOADING, LOGIN_LOADING, VERIFY_FAILURE, VERIFY_LOADING, VERIFY_SUCCESS } from '../actions/types';
 
 const INITIAL_STATE = {
   signup: { status: null, error: null, loading: null },
   login: { status: null, error: null, loading: null },
+  verify: { status: null, error: null, loading: null }
 };
 
 const AuthReducer = (state = INITIAL_STATE, action) => {
@@ -12,6 +13,9 @@ const AuthReducer = (state = INITIAL_STATE, action) => {
 
     case LOGIN_LOADING:
       return { ...state, login: { loading: true } };
+
+    case VERIFY_LOADING:
+      return { ...state, verify: { loading: true } };
 
     case SIGNUP_SUCCESS:
       return { ...state, signup: { status: true, error: null, loading: false } };
@@ -24,6 +28,12 @@ const AuthReducer = (state = INITIAL_STATE, action) => {
 
     case LOGIN_FAILURE:
       return { ...state, login: { status: false, error: action.message, loading: false } };
+
+    case VERIFY_SUCCESS:
+      return { ...state, verify: { status: true, error: null, loading: false } };
+
+    case VERIFY_FAILURE:
+      return { ...state, verify: { status: false, error: action.message, loading: false } };
 
     default:
       return INITIAL_STATE;

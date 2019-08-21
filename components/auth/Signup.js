@@ -39,6 +39,15 @@ class Signup extends Component {
     this.props.navigation.navigate('Login');
   };
 
+  onVerifyPress = () => {
+    this.props.navigation.navigate('Verify');
+  }
+
+  componentWillReceiveProps = (nextProps) => {
+    // navigate to verify screen on successful signup
+    if (nextProps.signup.status) { this.onVerifyPress(); }
+  }
+
   render() {
     const { loading } = this.props.signup;
     return (
@@ -94,6 +103,12 @@ class Signup extends Component {
               buttonStyle={formButtonStyle}
               loading={loading}
               disabled={loading}
+            />
+            <Text style={{ textAlign: 'center' }}>OR</Text>
+            <Button
+              title="Verify"
+              buttonStyle={formButtonStyle}
+              onPress={this.onVerifyPress}
             />
             <Text style={{ textAlign: 'center' }}>OR</Text>
             <Button

@@ -7,34 +7,13 @@ import { formButtonStyle, errorStyle } from '../../utils/styles';
 import { formatDate } from '../../utils/helpers';
 import FormInput from '../../components/commons/FormInput';
 import SelectList from '../../components/commons/SelectList';
-
-const communityList = [
-  {
-    name: 'Brigade Lakefront',
-    subtitle: 'Hoodi'
-  },
-  {
-    name: 'Prestige Shantiniketan',
-    subtitle: 'Whitefield'
-  }
-];
-
-const classList = [
-  {
-    id: 'Football',
-    name: 'Football',
-    subtitle: 'Hoodi'
-  },
-  {
-    id: 'Badmintom',
-    name: 'Badminton',
-    subtitle: 'Whitefield'
-  }
-];
+import { getCommunities, getSports } from '../../api/services';
 
 class NewBatchScreen extends Component {
   state = {
     selectedSportId: null,
+    communityList: [],
+    sportsList: [],
     communityId: null,
     showCalendarOverlay: false,
     selectedStartDate: null,
@@ -47,6 +26,14 @@ class NewBatchScreen extends Component {
     errors: {
 
     }
+  }
+
+  componentDidMount() {
+    getCommunities()
+      .then(communityList => this.setState({ communityList }));
+
+    getSports()
+      .then(sportsList => this.setState({ sportsList }));
   }
 
   getFormattedDateRange = () => {
@@ -87,7 +74,7 @@ class NewBatchScreen extends Component {
   };
 
   render() {
-    const { selectedStartDate, selectedEndDate } = this.state;
+    const { selectedStartDate, selectedEndDate, communityList, sportsList } = this.state;
     const minDate = new Date(); // Today
     const startDate = selectedStartDate ? selectedStartDate.toString() : '';
     const endDate = selectedEndDate ? selectedEndDate.toString() : '';
@@ -100,20 +87,22 @@ class NewBatchScreen extends Component {
           <SelectList
             title="Select a community"
             headerText="Choose a community"
-            list={communityList}
+
             uniqueIdentifier="name"
             onSelect={(item) => {
               this.setState({ communityId: item.name });
             }}
+            fetchData={getCommunities}
           />
 
           <SelectList
             title="Select a sport class"
-            list={classList}
+
             uniqueIdentifier="id"
             onSelect={(item) => {
               this.setState({ selectedSportId: item.id });
             }}
+            fetchData={getSports}
           />
 
           <TouchableOpacity onPress={() => this.setState({ showCalendarOverlay: true })}>

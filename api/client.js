@@ -1,8 +1,12 @@
 import axios from 'axios';
 
-var axiosInstance = axios.create({
-  baseURL: 'https://domain.com/foo/bar',
-  /* other custom settings */
+const axiosInstance = axios.create({
+  baseURL: 'https://jsonplaceholder.typicode.com',
+  // timeout: 1000,
+  // headers: { 'X-Custom-Header': 'foobar' }
 });
+
+axiosInstance.getWithHeaders = url => axios.get(url,
+  { headers: { Authorization: global.email } });
 
 export default axiosInstance;

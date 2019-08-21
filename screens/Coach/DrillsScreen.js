@@ -6,14 +6,7 @@ import { containerStyle, formButtonStyle } from '../../utils/styles';
 
 import LoadingIndicator from '../../components/commons/LoadingIndicator';
 import NewDrillScreen from './NewDrillScreen';
-
-const DUMMY_DRILLS = [
-  {
-    id: 'drillid',
-    name: 'dril name',
-    description: 'drill description'
-  }
-];
+import { getDrills } from '../../api/services';
 
 class DrillsScreen extends Component {
   state = {
@@ -26,12 +19,8 @@ class DrillsScreen extends Component {
   }
 
   loadDrills = () => {
-    setTimeout(() => {
-      this.setState({
-        drills: DUMMY_DRILLS,
-        loading: false
-      });
-    }, 1000);
+    getDrills()
+      .then(drills => this.setState({ drills, loading: false }));
   }
 
   render() {
@@ -60,7 +49,7 @@ class DrillsScreen extends Component {
         <View>
           <Button
             buttonStyle={formButtonStyle}
-            title="Register new drill"
+            title="Add new drill"
             onPress={() => this.props.navigation.navigate('NewDrill')}
           />
         </View>

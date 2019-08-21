@@ -4,11 +4,31 @@ import { Text, Button, Overlay, ListItem, withTheme, Avatar } from 'react-native
 import PropTypes from 'prop-types';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import { getAvatarText } from '../../utils/helpers';
+import LoadingIndicator from './LoadingIndicator';
 
 class SelectList extends Component {
   state = {
     selectedItem: null,
-    showOverlay: false
+    showOverlay: false,
+    list: this.props.list,
+    loading: false
+  }
+
+  componentWillMount() {
+    if (!this.props.lazyFetch) { this.fetchList(); }
+  }
+
+  componentWillReceiveProps = (newProps) => {
+    if (newProps.list) { this.setState({ list: newProps.list }); }
+  }
+
+  fetchList = () => {
+    if (this.props.fetchData) {
+      this.setState({ loading: true });
+      this.props.fetchData()
+        .then(list => this.setState({ list, loading: false }))
+        .catch(err => this.setState({ loading: false }));
+    }
   }
 
   isItemSelected = (item, index) => {
@@ -44,9 +64,10 @@ class SelectList extends Component {
   }
 
   render() {
-    const { title, onSelect, list, headerText, theme } = this.props;
+    const { title, onSelect, headerText, theme, lazyFetch, busy } = this.props;
     const headerTextDisplay = headerText;
-    const { selectedItem } = this.state;
+    const { list, loading, selectedItem } = this.state;
+
     return (
       <View style={{ width: '100%' }}>
         <Text style={{ width: '100%', fontWeight: 'bold', color: 'gray', backgroundColor: '#eee', lineHeight: 20, padding: 6 }}>{title}</Text>
@@ -59,7 +80,10 @@ class SelectList extends Component {
               leftIcon={<Ionicon name="md-help-circle-outline" size={24} />}
               rightTitle="Add"
               rightTitleStyle={{ color: theme.colors.primary }}
-              onPress={() => this.setState({ showOverlay: true })}
+              onPress={() => {
+                this.setState({ showOverlay: true });
+                if (lazyFetch) this.fetchList();
+              }}
             />
           )
         }
@@ -72,7 +96,10 @@ class SelectList extends Component {
               leftAvatar={{ source: { uri: selectedItem.avatar_url } }}
               rightTitle="Edit"
               rightTitleStyle={{ color: theme.colors.primary }}
-              onPress={() => this.setState({ showOverlay: true })}
+              onPress={() => {
+                this.setState({ showOverlay: true });
+                if (lazyFetch) this.fetchList();
+              }}
             />
           )
         }
@@ -83,7 +110,10 @@ class SelectList extends Component {
           overlayStyle={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
           onBackdropPress={() => this.setState({ showOverlay: false })}
         >
+          { (busy || loading) && <LoadingIndicator />}
+          {!(busy || loading) && (
           <React.Fragment>
+
             <View>
               <Text style={{
                 alignSelf: 'center',
@@ -97,7 +127,7 @@ class SelectList extends Component {
 
               <ScrollView style={{ borderColor: 'lightgray', borderTopWidth: 1 }}>
                 {
-                list.map((item, index) => (
+                list && list.map((item, index) => (
                   <ListItem
                     containerStyle={this.getListItemSelectedStyle(item, index)}
                     key={this.getKey(item, index)}
@@ -105,7 +135,7 @@ class SelectList extends Component {
                     title={item.name}
                     subtitle={item.subtitle}
                     subtitleStyle={styles.subtitle}
-                    rightIcon={this.getIcon(item, index, theme)}
+                    checkmark={this.isItemSelected(item, index)}
                     rightTitleStyle={{ color: theme.colors.primary }}
                     onPress={() => this.setState({ selectedItem: item })}
                   />
@@ -137,8 +167,9 @@ class SelectList extends Component {
               </View>
             </View>
           </React.Fragment>
+          )
+          }
         </Overlay>
-
       </View>
     );
   }
@@ -152,13 +183,20 @@ const styles = {
 
 SelectList.propTypes = {
   uniqueIdentifier: PropTypes.string.isRequired,
-  list: PropTypes.arrayOf(PropTypes.object).isRequired,
+  list: PropTypes.arrayOf(PropTypes.object),
   title: PropTypes.string.isRequired,
   headerText: PropTypes.string,
+  fetchData: PropTypes.func,
+  lazyFetch: PropTypes.bool,
+  busy: PropTypes.bool
 };
 
 SelectList.defaultProps = {
-  headerText: 'Select an item'
+  headerText: 'Select an item',
+  list: [],
+  fetchData: null,
+  lazyFetch: false,
+  busy: false
 };
 
 export default withTheme(SelectList);
